@@ -1,0 +1,17 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Env
+*.env
+
+# React
+client/node_modules/
+client/build/
+
+# Server
+server/node_modules/
+
+# VSCode
+.vscode/
