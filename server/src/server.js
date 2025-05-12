@@ -19,28 +19,67 @@
 // server/src/server.js
 
 
+// const express = require('express');
+// const app = express();
+// const port = 3000;
+
+// app.get('/', (req, res) => {
+//   res.send('Hello World from Express.js!');
+// });
+
+// app.listen(port, () => {
+//   console.log(`Server is running at http://localhost:${port}`);
+// });
+
+
+
+// server/src/server.js
 const express = require('express');
-const path = require('path');
+const next = require('next');        // ← no “.default” here
 const cors = require('cors');
+const path = require('path');
+const dotenv = require('dotenv');
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+dotenv.config();
 
-app.use(cors());
-app.use(express.json());
+const port = process.env.PORT || 3000;
+const dev  = process.env.NODE_ENV !== 'production';
 
-// Serve React frontend from client/build
-app.use(express.static(path.join(__dirname, '../../client/build')));
-
-// Fallback to React for all other routes
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
+// point this at the folder containing your Next.js project (where package.json & next.config.js live)
+const nextApp = next({
+  dev,
+  dir: path.join(__dirname, '../../client'),
 });
 
-if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`✅ Server running at http://localhost:${PORT}`);
-  });
-}
+const handle = nextApp.getRequestHandler();
 
-module.exports = app;
+nextApp
+  .prepare()
+  .then(() => {
+    const app = express();
+
+    app.use(cors());
+    app.use(express.json());
+
+    // any API routes you need
+    app.get('/api', (req, res) => {
+      res.json({ message: 'Hello from Express API' });
+    });
+
+    // serve your Next.js pages (including the “/” page)
+    app.all('*', (req, res) => {
+      return handle(req, res);
+    });
+
+    app.listen(port, () => {
+      console.log(`✅ Server running at http://localhost:${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Failed to start server:', err);
+    process.exit(1);
+  });
+
+
+
+

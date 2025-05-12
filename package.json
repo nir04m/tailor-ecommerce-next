@@ -1,0 +1,14 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "install": "cd server && npm install && cd ../client && npm install",
+    "dev": "concurrently \"cd client && next start\" \"cd server && nodemon src/server.js\"",
+    "build": "cd client && npm run build",
+    "start": "node server/src/server.js",
+    "postinstall": "npm run build",
+    "heroku-postbuild": "npm run build",
+    "lint": "next lint"
+  }
+}
