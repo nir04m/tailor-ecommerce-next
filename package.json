@@ -4,11 +4,14 @@
   "private": true,
   "scripts": {
     "install": "cd server && npm install && cd ../client && npm install",
-    "dev": "concurrently \"cd client && next start\" \"cd server && nodemon src/server.js\"",
+    "dev": "concurrently \"cd client && npm run dev \" \"cd server && nodemon src/index.js\"",
     "build": "cd client && npm run build",
-    "start": "node server/src/server.js",
+    "start": "node server/src/index.js",
     "postinstall": "npm run build",
     "heroku-postbuild": "npm run build",
     "lint": "next lint"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }
